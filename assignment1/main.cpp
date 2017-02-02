@@ -32,51 +32,19 @@ int main() {
 	char option;		//flag to continue or exit the program
 	string input;
 	VStack<int> stack;
-	int value;
+	int value;			//hold numeric value for a character
 	map<char, int> M;
+	int l, r, result;
 
 	do {
-
-
 
 		int index = 0;
 		cout << "Enter an expression: ";
 		cin >> input;
 
-		string dinput = input;
-		FLVector<char> alphabet(input.length(), '0');
-		FLVector<char> data(input.length(), '0');
-
-		for (int i = 0; i < dinput.length(); i++) {
-			for (int j = 0; j < dinput.length(); j++) {
-				if ((i != j) && (dinput[j] == dinput[i])) {
-					dinput[j] = '0';
-				}
-			}
-		}
-
-
-		for (int i = 0; i < dinput.length(); i++) {
-			if (dinput[i] == '0' || dinput[i] == '+' || dinput[i] == '-' || dinput[i] == '*' || dinput[i] == '/') {
-				continue;
-			}
-			alphabet.add(index, dinput[i]);
-			index++;
-
-		}
-
-		//associate characters with value set by user
-		for (int i = 0; i < alphabet.length(); i++) {
-			if (alphabet.get(i) != '0') {
-				cout << "Enter value for " << alphabet.get(i) << " : ";
-				cin >> value;
-				M.insert(std::make_pair(alphabet.get(i), value));
-			}
-		}
-
-
-		int l, r, var, result = 0;
+		result = 0;
 		for (int i = 0; i < input.length(); i++) {
+			//If the next character is an operator
 			if (input[i] == '+' || input[i] == '-' || input[i] == '*' || input[i] == '/') {
 				r = stack.peek();
 				stack.pop();
@@ -96,18 +64,23 @@ int main() {
 				stack.push(result);
 			}
 			else {
-				//convert characters into their correspondence value
+				//convert characters into their correspondence value and store in a stack
+				if (M.count(input[i]) < 1) {
+					cout << "Enter value for " << input[i] << " : ";
+					cin >> value;
+				}
+				M.insert(std::make_pair(input[i], value));
 				for (auto it = M.begin(); it != M.end(); it++) {
 					if (input[i] == it->first) {
-						var = it->second;
-						stack.push(var);
+						stack.push(it->second);
 					}
 				}
 			}
 		}
 
 		cout << "Sum is: " << stack.peek() << endl;
-		stack.clear();
+		//stack.clear();
+		M.clear();
 
 		cout << "Do you want to continue (Y/N): ";
 		cin >> option;
