@@ -6,6 +6,9 @@ using std::endl;
 #include <string>
 using std::string;
 
+#include <fstream>
+using std::ifstream;
+
 void checkWord(string& w, int table[][2]) {
 	bool exit = false;
 	int i = 0;
@@ -46,13 +49,27 @@ void checkWord(string& w, int table[][2]) {
 }
 
 int main() {
-	string w1 = "aaab$";
-	string w2 = "bcbbca$";
+	string a = "aacab$";
+	string w1;
+	string w2;
+	ifstream input("data.txt", std::ios_base::in);
+	if (input.good()) {
+		input >> w1;
+		input >> w2;
+	}
+	else {
+		cout << "Cannot open Data.txt file" << endl;
+		return 0;
+	}
 
+	
 	//5 states 2 inputs per state
 	int table[5][2] = { {1,2} , {1,3}, {4,2} , {4,4} , {4,4} };
 
+	checkWord(w1, table);
+	cout << endl;
 	checkWord(w2, table);
+	cout << endl;
 
 	return 0;
 }
