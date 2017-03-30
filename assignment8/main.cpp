@@ -8,6 +8,7 @@
 
 using namespace std;
 
+// Convert the character into number to look up within the vector
 int CharToInt(string& str) {
 	char s = str[0];
 	switch (s) {
@@ -93,8 +94,9 @@ int main() {
 	// Read first character of the input
 	a = exp[0];
 	int i = 1;
-	cout << exp.length();
-	while(i < exp.length() + 1){
+	int str_size = exp.length();
+	//cout << exp.length();
+	while(str_size > 0){
 		
 		// Pop the stack
 		b = myStack.top();
@@ -103,19 +105,28 @@ int main() {
 		// When there is a match, we move on to the next character in the expression
 		if (b == a) {
 			a = exp[i];
+			str_size--;
 			i++;
 		}else {
 			// Look for [b,a]
 			auto search = myMap.find(b);
+			// Check to see if the character that was read is actually one of the tokens
 			if (CharToInt(a) > -1 && CharToInt(a) < search->second.size()) {
 				c = search->second[CharToInt(a)];
 				cout << "TESTING VARIABLE c = " << c << endl;
+				// If the cell in the table is a lamda, then pop the next character in the stack
 				if (c == "&") {
 					continue;
 				}
+				// If the tracing ends up at one of the empty cell in the parsing table (labeled 0 in this program), then the expression is not a word
+				if (c == "0") {
+					break;
+				}
 			}
+			// If the expression has something that is not one of the tokens, then the expression is not a word
 			else {
 				cout << "ERROR" << endl;
+				break;
 			}
 			// Push the string onto the stack in reverse order
 			for (int i = c.length() - 1; i > -1; i--) {
@@ -123,12 +134,6 @@ int main() {
 			}
 		}
 	}
-
-
-
-
-
-
 
 	// Things in stack
 	while (myStack.size() > 0){
