@@ -18,6 +18,7 @@ int TestFunc(string str, unordered_map<string, vector<string>>& map) {
 			return j;
 		}
 	}
+	return j;
 }
 
 // Convert the character into number to look up within the vector
@@ -87,7 +88,7 @@ int main() {
 	}
 
 	cout << "TEST FUNCTION: ";
-	cout << TestFunc("$", myMap);
+	cout << TestFunc("l", myMap);
 
 	string exp;
 	stack<string> myStack;
