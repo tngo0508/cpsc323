@@ -8,6 +8,18 @@
 
 using namespace std;
 
+// Generic function to the function below
+int TestFunc(string str, unordered_map<string, vector<string>>& map) {
+	auto it = map.begin();
+	int j = -1;
+	for (int i = 0; i < it->second.size(); i++) {
+		if (str == it->second[i]) {
+			j = i;
+			return j;
+		}
+	}
+}
+
 // Convert the character into number to look up within the vector
 int CharToInt(string& str) {
 	char s = str[0];
@@ -55,14 +67,14 @@ int main() {
 	unordered_map<string, vector<string>> myMap;
 	string dummy_str;
 	string key;
-	for(int i = 1; input >> dummy_str; i++){
+	for (int i = 1; input >> dummy_str; i++) {
 		cols.push_back(dummy_str);
 		if (i % 9 == 0) {
 			key = cols[0];
 			cols.erase(cols.begin());
-			myMap.insert(make_pair(key,cols));
+			myMap.insert(make_pair(key, cols));
 			cols.clear();
-		}		
+		}
 	}
 
 	cout << "Testing parsing table" << endl;
@@ -74,6 +86,9 @@ int main() {
 		cout << endl;
 	}
 
+	cout << "TEST FUNCTION: ";
+	cout << TestFunc("$", myMap);
+
 	string exp;
 	stack<string> myStack;
 	vector<string> vstack;
@@ -84,8 +99,8 @@ int main() {
 	string a;	// Reading inputs
 	string b;	// Storing data after popping the stack
 	string c;	// Storing the lookup data inside parsing table
-	
-	// Erase the first line since it contains irrelevant information (eg. states i + - * / ( ) $)
+
+				// Erase the first line since it contains irrelevant information (eg. states i + - * / ( ) $)
 	myMap.erase(myMap.begin());
 	// Push $ onto stack
 	myStack.push("$");
@@ -96,8 +111,8 @@ int main() {
 	int i = 1;
 	int str_size = exp.length();
 	//cout << exp.length();
-	while(str_size > 0){
-		
+	while (str_size > 0) {
+
 		// Pop the stack
 		b = myStack.top();
 		myStack.pop();
@@ -107,7 +122,8 @@ int main() {
 			a = exp[i];
 			str_size--;
 			i++;
-		}else {
+		}
+		else {
 			// Look for [b,a]
 			auto search = myMap.find(b);
 			// Check to see if the character that was read is actually one of the tokens
@@ -136,7 +152,7 @@ int main() {
 	}
 
 	// Things in stack
-	while (myStack.size() > 0){
+	while (myStack.size() > 0) {
 		vstack.push_back(myStack.top());
 		myStack.pop();
 	}
@@ -144,7 +160,7 @@ int main() {
 	for (int i = vstack.size() - 1; i < vstack.size(); i--) {
 		cout << vstack[i];
 	}
-	
+
 	cout << endl;
 	if (vstack.size() == 0) {
 		cout << "Word accepted" << endl;
@@ -152,6 +168,7 @@ int main() {
 	else {
 		cout << "Word is not accepted or you screw up" << endl;
 	}
+
 
 	cout << endl;
 	return 0;
