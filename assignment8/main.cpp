@@ -8,12 +8,11 @@
 
 using namespace std;
 
-// Generic function to the function below
-int TestFunc(string str, unordered_map<string, vector<string>>& map) {
-	auto it = map.begin();
+// Generic function to convert the character into number to look up within the vector
+int TestFunc(string& str, vector<string>& states) {
 	int j = -1;
-	for (int i = 0; i < it->second.size(); i++) {
-		if (str == it->second[i]) {
+	for (int i = 0; i < states.size(); i++) {
+		if (str == states[i]) {
 			j = i;
 			return j;
 		}
@@ -21,43 +20,12 @@ int TestFunc(string str, unordered_map<string, vector<string>>& map) {
 	return j;
 }
 
-// Convert the character into number to look up within the vector
-int CharToInt(string& str) {
-	char s = str[0];
-	switch (s) {
-	case 'i':
-		return 0;
-
-	case '+':
-		return 1;
-
-	case '-':
-		return 2;
-
-	case '*':
-		return 3;
-
-	case '/':
-		return 4;
-
-	case '(':
-		return 5;
-
-	case ')':
-		return 6;
-
-	case '$':
-		return 7;
-
-	default:
-		return -1;
-	}
-
-}
-
 int main() {
+	// Store the number of states
+	int states_number = 0;
+
 	fstream input;
-	input.open("parse_table.txt", ios_base::in);
+	input.open("parse_table2.txt", ios_base::in);
 	if (!input) {
 		cout << "Cannot find the parsing table" << endl;
 		cout << "Program exits" << endl;
@@ -70,7 +38,10 @@ int main() {
 	string key;
 	for (int i = 1; input >> dummy_str; i++) {
 		cols.push_back(dummy_str);
-		if (i % 9 == 0) {
+		if (dummy_str == "$") {
+			states_number = i;
+		}
+		if (states_number != 0 && i % states_number == 0) {
 			key = cols[0];
 			cols.erase(cols.begin());
 			myMap.insert(make_pair(key, cols));
@@ -87,8 +58,6 @@ int main() {
 		cout << endl;
 	}
 
-	cout << "TEST FUNCTION: ";
-	cout << TestFunc("l", myMap);
 
 	string exp;
 	stack<string> myStack;
@@ -101,7 +70,12 @@ int main() {
 	string b;	// Storing data after popping the stack
 	string c;	// Storing the lookup data inside parsing table
 
-				// Erase the first line since it contains irrelevant information (eg. states i + - * / ( ) $)
+	vector<string> states;
+	auto it = myMap.begin();
+	for (string elm : it->second) {
+		states.push_back(elm);
+	}
+	// Erase the first line since it contains irrelevant information (eg. states i + - * / ( ) $)
 	myMap.erase(myMap.begin());
 	// Push $ onto stack
 	myStack.push("$");
@@ -128,8 +102,8 @@ int main() {
 			// Look for [b,a]
 			auto search = myMap.find(b);
 			// Check to see if the character that was read is actually one of the tokens
-			if (CharToInt(a) > -1 && CharToInt(a) < search->second.size()) {
-				c = search->second[CharToInt(a)];
+			if (TestFunc(a, states) > -1 && TestFunc(a, states) < search->second.size()) {
+				c = search->second[TestFunc(a, states)];
 				cout << "TESTING VARIABLE c = " << c << endl;
 				// If the cell in the table is a lamda, then pop the next character in the stack
 				if (c == "&") {
@@ -167,7 +141,7 @@ int main() {
 		cout << "Word accepted" << endl;
 	}
 	else {
-		cout << "Word is not accepted or you screw up" << endl;
+		cout << "Word is not accepted" << endl;
 	}
 
 
