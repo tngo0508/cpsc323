@@ -1,0 +1,7 @@
+states	a	b	+	-	*	/	(	)	$
+S	a=E	0	0	0	0	0	0	0	0
+E	TQ	TQ	0	0	0	0	TQ	0	0
+Q	0	0	+TQ	-TQ	0	0	0	&	&
+T	FR	FR	0	0	0	0	FR	0	0
+R	0	0	&	&	*FR	/FR	0	&	&
+F	a	b	0	0	0	0	(E)	0	0
