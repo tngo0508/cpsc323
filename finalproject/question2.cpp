@@ -33,7 +33,7 @@ int main() {
 	fstream input;
 	fstream programInputFile;
 	ofstream output;
-	input.open("parsing_table.txt", ios_base::in);
+	input.open("parsing_table3.txt", ios_base::in);
 	if (!input) {
 		cout << "Cannot find the parsing table" << endl;
 		cout << "Program exits" << endl;
@@ -58,6 +58,7 @@ int main() {
 			cols.clear();
 		}
 	}
+
 	output.open("output.txt");
 	cout << "Testing parsing table" << endl;
 	for (auto it = myMap.begin(); it != myMap.end(); it++) {
@@ -98,27 +99,57 @@ int main() {
 		return 0;
 	}
 
+	bool check[5] = { false };
+
 	// Dummy variable storing the word read from the program file, then it is pushed into the program vector
 	string dummyVar;
 	while (programInputFile >> dummyVar) {
 		if (dummyVar == "PROGRAM") {
 			dummyVar = "p";
+			check[0] = true;
 		}
 		else if (dummyVar == "BEGIN") {
 			dummyVar = "b";
+			check[1] = true;
 		}
 		else if (dummyVar == "INTEGER") {
 			dummyVar = "i";
+			check[2] = true;
 		}
 		else if (dummyVar == "PRINT") {
 			dummyVar = "c";
+			check[3] = true;
 		}
 		else if (dummyVar == "END."){
 			dummyVar = "$";
+			check[4] = true;
 		}
 		program.push_back(dummyVar);
 	}
 
+	if (check[0] == false) {
+		cout << "PROGRAM is either missing or spelled incorrectly!" << endl;
+		return 0;
+	}
+
+	if (check[1] == false) {
+		cout << "BEGIN is either missing or spelled incorrectly!" << endl;
+		return 0;
+	}
+
+	if (check[2] == false) {
+		cout << "INTEGER is either missing or spelled incorrectly!" << endl;
+		return 0;
+	}
+
+	if (check[3] == false) {
+		cout << "PRINT is either missing or spelled incorrectly!" << endl;
+	}
+
+	if (check[4] == false) {
+		cout << "END. is either missing or spelled incorrectly!" << endl;
+		return 0;
+	}
 
 	// Save the first key->value pair in map since it will be erased for the following reasons:
 	//  -it makes adding the starting symbol into the stack more easily
@@ -171,6 +202,10 @@ int main() {
 				else {
 					// Look for [stack_front_value, input_word] in the table
 					auto search = myMap.find(stack_front_value);
+					if (search == myMap.end()) {
+						cout << "ERROR: cannot find column" << endl;
+						return 0;
+					}
 					// Check to see if the character that was read is actually one of the tokens
 					if (TestFunc(identifier, states) > -1 && TestFunc(identifier, states) < search->second.size()) {
 						value_in_table = search->second[TestFunc(identifier, states)];
@@ -186,7 +221,7 @@ int main() {
 					}
 					// If the expression has something that is not one of the tokens, then the expression is not a word
 					else {
-						cout << "ERROR" << endl;
+						cout << "ERROR: cannot find row" << endl;
 						break;
 					}
 					// Push the string onto the stack in reverse order
@@ -217,6 +252,10 @@ int main() {
 		else {
 			// Look for [stack_front_value, input_word] in the table
 			auto search = myMap.find(stack_front_value);
+			if (search == myMap.end()) {
+				cout << "ERROR: cannot find column" << endl;
+				return 0;
+			}
 			// Check to see if the character that was read is actually one of the tokens
 			if (TestFunc(input_word, states) > -1 && TestFunc(input_word, states) < search->second.size()) {
 				value_in_table = search->second[TestFunc(input_word, states)];
@@ -232,7 +271,7 @@ int main() {
 			}
 			// If the expression has something that is not one of the tokens, then the expression is not a word
 			else {
-				cout << "ERROR" << endl;
+				cout << "ERROR: cannot find row" << endl;
 				break;
 			}
 			// Push the string onto the stack in reverse order
